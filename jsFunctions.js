@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (event) {
   select();
-  document.getElementById("select").addEventListener("click", select);
+  document.getElementById("select").addEventListener("change", select);
 })
 function grafico(fecha, casos, fallecidos, recuperados) {
   Chart.defaults.global.defaultFontColor = 'white';
@@ -63,7 +63,6 @@ function select() {
     var opcion = this.options[this.selectedIndex].value;
   }
   leerJSON(opcion);
-  console.log(opcion);
 }
 
 //esta diseñado para convertir cualquier json en una tabla
