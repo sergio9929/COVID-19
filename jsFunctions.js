@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (event) {
-  leerJSON();
-
+  select();
+  document.getElementById("select").addEventListener("click", select);
 })
 function grafico(fecha, casos, fallecidos, recuperados) {
   Chart.defaults.global.defaultFontColor = 'white';
@@ -55,8 +55,19 @@ function grafico(fecha, casos, fallecidos, recuperados) {
     }
   });
 }
+
+//select
+function select() {
+  var opcion="todos";
+  if(this.options!=undefined){
+    var opcion = this.options[this.selectedIndex].value;
+  }
+  leerJSON(opcion);
+  console.log(opcion);
+}
+
 //esta diseñado para convertir cualquier json en una tabla
-function leerJSON() {
+function leerJSON(opcion) {
 
   $.ajax({
     url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/covid2demarzo.json', //escribe el nombre del archivo
@@ -72,6 +83,7 @@ function leerJSON() {
       var sumacasos = 0;
       var sumafallecidos = 0;
       var sumarecuperados = 0;
+
       //fill table head
       var head = "<tr>";
       for (let j = 0; j < Object.keys(a[0]).length; j++) {
@@ -86,38 +98,59 @@ function leerJSON() {
         body += "<tr>";
         for (let j = 0; j < Object.keys(a[i]).length; j++) {
           var nomficha = Object.keys(a[i])[j];
-          if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
-            body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
-          } else {
-            body += "<td>" + a[i][nomficha] + "</td>";
+          if (a[i].Fecha == "01/04/2020") {
+            if (opcion == a[i]["CCAA Codigo ISO"]) {
+              if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
+                body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
+              } else {
+                body += "<td>" + a[i][nomficha] + "</td>";
+              }
+            }else if(opcion=="todos"){
+              if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
+                body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
+              } else {
+                body += "<td>" + a[i][nomficha] + "</td>";
+              }
+            }
+
           }
+
         }
         body += "</tr>";
 
-        //Eliminar NaN
-        if (a[i].Casos > 0) {
-          sumacasos += a[i].Casos;
-        }
-        if (a[i].Fallecidos > 0) {
-          sumafallecidos += a[i].Fallecidos;
-        }
-        if (a[i].Recuperados > 0) {
-          sumarecuperados += a[i].Recuperados;
+        if (opcion == a[i]["CCAA Codigo ISO"]) {
+          fecha.push(a[i].Fecha);
+          casos.push(a[i].Casos);
+          fallecidos.push(a[i].Fallecidos);
+          recuperados.push(a[i].Recuperados);
+        } else if(opcion == "todos"){
+          //Eliminar NaN
+          if (a[i].Casos > 0) {
+            sumacasos += a[i].Casos;
+          }
+          if (a[i].Fallecidos > 0) {
+            sumafallecidos += a[i].Fallecidos;
+          }
+          if (a[i].Recuperados > 0) {
+            sumarecuperados += a[i].Recuperados;
+          }
+
+          //suma
+          if (a[i]["CCAA Codigo ISO"] == "RI") {
+            fecha.push(a[i].Fecha);
+            casos.push(sumacasos);
+            fallecidos.push(sumafallecidos);
+            recuperados.push(sumarecuperados);
+            sumacasos = 0;
+            sumafallecidos = 0;
+            sumarecuperados = 0;
+          }
         }
 
-        //suma
-        if (a[i]["CCAA Codigo ISO"] == "RI") {
-          fecha.push(a[i].Fecha);
-          casos.push(sumacasos);
-          fallecidos.push(sumafallecidos);
-          recuperados.push(sumarecuperados);
-          sumacasos = 0;
-          sumafallecidos = 0;
-          sumarecuperados = 0;
-        }
       }
 
       //display
+      document.getElementById("chartContent").innerHTML="<canvas class=\"mb-3\" id=\"myChart\"></canvas>"
       document.getElementById("table").innerHTML = head + body;
       grafico(fecha, casos, fallecidos, recuperados);
     },
