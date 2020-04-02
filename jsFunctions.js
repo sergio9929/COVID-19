@@ -59,7 +59,7 @@ function grafico(fecha, casos, fallecidos, recuperados) {
 function leerJSON() {
 
   $.ajax({
-    url: 'https://github.com/sergio9929/COVID-19/blob/master/covid2demarzo.json', //escribe el nombre del archivo
+    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/covid2demarzo.json', //escribe el nombre del archivo
     dataType: 'json',
 
     success: function (objeto) {
