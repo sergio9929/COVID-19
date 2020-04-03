@@ -69,7 +69,7 @@ function select() {
 function leerJSON(opcion) {
 
   $.ajax({
-    url: 'csvjson.json', //escribe el nombre del archivo
+    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
     dataType: 'json',
 
     success: function (a) {
