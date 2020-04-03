@@ -1,11 +1,16 @@
 var opcion = "todos";
-var maxdate;
+var maxdate = "20/02/2020";
+var tipografico = "total";
+var casosdiarios = [];
+var fallecidosdiarios = [];
+var recuperadosdiarios = [];
 document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
   select();
   leerJSON();
   document.getElementById("select").addEventListener("change", select);
   document.getElementById("fechas").addEventListener("change", fechas);
+  document.getElementById("grafico").addEventListener("change", cambiargrafico);
 })
 function grafico(fecha, casos, fallecidos, recuperados) {
   Chart.defaults.global.defaultFontColor = 'white';
@@ -91,6 +96,14 @@ function fechas() {
   leerJSON()
 }
 
+//grafico
+function cambiargrafico() {
+  if (this.options != undefined) {
+    tipografico = this.options[this.selectedIndex].value;
+  }
+  leerJSON()
+}
+
 function llenarfechas() {
   $.ajax({
     url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
@@ -117,10 +130,11 @@ function leerJSON() {
     dataType: 'json',
 
     success: function (a) {
-      var fecha = [];
-      var casos = [];
-      var fallecidos = [];
-      var recuperados = [];
+      var displaytotal = "";
+      var fecha = []
+      var casos = []
+      var fallecidos = []
+      var recuperados = []
       var sumacasos = 0;
       var sumafallecidos = 0;
       var sumarecuperados = 0;
@@ -136,33 +150,40 @@ function leerJSON() {
       //fill table body
       var body = "";
       for (let i = 0; i < a.length; i++) {
-        body += "<tr>";
-        for (let j = 0; j < Object.keys(a[i]).length; j++) {
-          var nomficha = Object.keys(a[i])[j];
+        if (tipografico == "total") {
+          body += "<tr>";
           if (a[i].Fecha == maxdate) {
             if (opcion == a[i]["CCAA Codigo ISO"]) {
-              if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
-                body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
-              } else {
+              for (let j = 0; j < Object.keys(a[i]).length; j++) {
+                var nomficha = Object.keys(a[i])[j];
                 body += "<td>" + a[i][nomficha] + "</td>";
               }
             } else if (opcion == "todos") {
-              if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
-                body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
-              } else {
+              for (let j = 0; j < Object.keys(a[i]).length; j++) {
+                var nomficha = Object.keys(a[i])[j];
                 body += "<td>" + a[i][nomficha] + "</td>";
               }
             }
           }
+          body += "</tr>";
+        } else {
+          if (opcion == "todos") {
+            provincias = document.getElementById("select").options;
+            if (a[i].Fecha == maxdate) {
+              let q1 = a[i].Casos - a[i - 19].Casos;
+              let q2=a[i].Fallecidos-a[i-19].Fallecidos;
+              let q3=a[i].Recuperados-a[i-19].Recuperados;
+              body += "<tr><td>" + a[i]["CCAA Codigo ISO"] + "</td><td>" + a[i].Fecha + "</td><td>" + q1 + "</td><td></td><td></td><td>" + q2 + "</td><td>" + q3 + "</td></tr>";
+            }
+          }
         }
-        body += "</tr>";
-
         if (opcion == a[i]["CCAA Codigo ISO"]) {
           fecha.push(a[i].Fecha);
           casos.push(a[i].Casos);
           fallecidos.push(a[i].Fallecidos);
           recuperados.push(a[i].Recuperados);
         } else if (opcion == "todos") {
+
           //Eliminar NaN
           if (a[i].Casos > 0) {
             sumacasos += a[i].Casos;
@@ -180,17 +201,38 @@ function leerJSON() {
             casos.push(sumacasos);
             fallecidos.push(sumafallecidos);
             recuperados.push(sumarecuperados);
+            if (maxdate == a[i].Fecha && sumacasos > 0 && tipografico == "total") {
+              displaytotal = "<tr><th>TOTAL</th><td></td><td>" + sumacasos + "</td><td></td><td></td><td>" + sumafallecidos + "</td><td>" + sumarecuperados + "</td></tr>";
+            }
             sumacasos = 0;
             sumafallecidos = 0;
             sumarecuperados = 0;
           }
         }
+      }
 
+      if (tipografico == "diario") {
+        for (let i = 0; i < fecha.length; i++) {
+          casosdiarios[i] = casos[i] - casos[i - 1];
+          recuperadosdiarios[i] = recuperados[i] - recuperados[i - 1];
+          fallecidosdiarios[i] = fallecidos[i] - fallecidos[i - 1];
+          if (maxdate == fecha[i]) {
+            if (opcion != "todos") {
+              body += "<tr><td>" + opcion + "</td><td>" + fecha[i] + "</td><td>" + casosdiarios[i] + "</td><td></td><td></td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
+            } else {
+              displaytotal = "<tr><th>TOTAL</th><td></td><td>" + casosdiarios[i] + "</td><td></td><td></td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
+            }
+          }
+        }
+
+        casos = casosdiarios;
+        fallecidos = fallecidosdiarios;
+        recuperados = recuperadosdiarios;
       }
 
       //display
-      document.getElementById("chartContent").innerHTML = "<canvas class=\"mb-3\" id=\"myChart\"></canvas>"
-      document.getElementById("table").innerHTML = head + body;
+      document.getElementById("chartContent").innerHTML = "<canvas class=\"mb-3\" id=\"myChart\"></canvas>";
+      document.getElementById("table").innerHTML = head + body + "<tr class=\"bg-dark\"><td colspan=\"7\"></td></tr>" + displaytotal;
       grafico(fecha, casos, fallecidos, recuperados);
     },
     error: function (xhr) {

@@ -22,11 +22,12 @@
       color: #f2ed6f;
       text-decoration: none;
     }
+
     canvas {
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-	}
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
   </style>
 </head>
 
@@ -49,26 +50,33 @@
                 <option value="IB">Islas Baleares</option>
                 <option value="CN">Canarias</option>
                 <option value="CB">Cantabria</option>
-                <option value="CL">Castilla y León</option>
                 <option value="CM">Castilla La Mancha</option>
+                <option value="CL">Castilla y León</option>
                 <option value="CT">Cataluña</option>
-                <option value="GA">Galicia</option>
+                <option value="CE">Ceuta</option>
                 <option value="VC">Comunidad Valenciana</option>
                 <option value="EX">Extremadura</option>
+                <option value="GA">Galicia</option>
                 <option value="MD">Comunidad de Madrid</option>
+                <option value="ME">Melilla</option>
                 <option value="MC">Región de Murcia</option>
                 <option value="NC">Comunidad Foral de Navarra</option>
                 <option value="PV">País Vasco</option>
-                <option value="NC">La Rioja</option>
-                <option value="CE">Ceuta</option>
-                <option value="ME">Melilla</option>
+                <option value="RI">La Rioja</option>
+
+
               </select>
             </div>
             <div class="col form-group">
               <select class="form-control bg-dark text-light" name="" id="fechas"></select>
             </div>
           </div>
-
+          <div class="form-group">
+            <select class="form-control bg-dark text-light" name="" id="grafico">
+              <option value="total">Total</option>
+              <option value="diario">Diario</option>
+            </select>
+          </div>
 
 
         </form>
@@ -76,6 +84,7 @@
 
         <div class="table-responsive-md">
           <table id="table" class="table table-striped table-dark w-100"></table>
+          <table id="table2" class="table table-striped table-dark w-100"></table>
         </div>
         </table>
       </div>
