@@ -69,12 +69,10 @@ function select() {
 function leerJSON(opcion) {
 
   $.ajax({
-    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/covid2demarzo.json', //escribe el nombre del archivo
+    url: 'csvjson.json', //escribe el nombre del archivo
     dataType: 'json',
 
-    success: function (objeto) {
-      var nomobjeto = Object.keys(objeto);
-      var a = objeto[nomobjeto];
+    success: function (a) {
       var fecha = [];
       var casos = [];
       var fallecidos = [];
@@ -82,6 +80,21 @@ function leerJSON(opcion) {
       var sumacasos = 0;
       var sumafallecidos = 0;
       var sumarecuperados = 0;
+
+      //date
+      var dateanterior=date;
+      for (let i = 0; i < a.length; i++) {
+        var dates=a[i].Fecha;
+        dates=dates.split("/");
+        var date=new Date();
+        date.setDate(dates[0],dates[1],dates[2]);
+        if(date>dateanterior){
+          var datemax=dates[0]+"/"+dates[1]+"/"+dates[2];
+        }
+        dateanterior=date;
+        
+      }
+      console.log(datemax);
 
       //fill table head
       var head = "<tr>";
@@ -97,7 +110,7 @@ function leerJSON(opcion) {
         body += "<tr>";
         for (let j = 0; j < Object.keys(a[i]).length; j++) {
           var nomficha = Object.keys(a[i])[j];
-          if (a[i].Fecha == "01/04/2020") {
+          if (a[i].Fecha == datemax ) {
             if (opcion == a[i]["CCAA Codigo ISO"]) {
               if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
                 body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
@@ -113,7 +126,7 @@ function leerJSON(opcion) {
             }
 
           }
-
+          dateanterior=date[i]
         }
         body += "</tr>";
 
