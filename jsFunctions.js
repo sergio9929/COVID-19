@@ -1,6 +1,11 @@
+var opcion="todos";
+var maxdate;
 document.addEventListener("DOMContentLoaded", function (event) {
+  llenarfechas();
   select();
+  leerJSON();
   document.getElementById("select").addEventListener("change", select);
+  document.getElementById("fechas").addEventListener("change", fechas);
 })
 function grafico(fecha, casos, fallecidos, recuperados) {
   Chart.defaults.global.defaultFontColor = 'white';
@@ -14,10 +19,10 @@ function grafico(fecha, casos, fallecidos, recuperados) {
         label: 'fallecidos',
         data: fallecidos,
         backgroundColor: [
-          '#f2ed6f'
+          'rgba(	236, 228, 39, .7)'
         ],
         borderColor: [
-          '#f2ed6f',
+          'rgba(242, 237, 111, .5)',
         ],
         borderWidth: 1
       }, {
@@ -58,18 +63,43 @@ function grafico(fecha, casos, fallecidos, recuperados) {
 
 //select
 function select() {
-  var opcion="todos";
-  if(this.options!=undefined){
-    var opcion = this.options[this.selectedIndex].value;
+  if (this.options != undefined) {
+    opcion = this.options[this.selectedIndex].value;
   }
-  leerJSON(opcion);
+  leerJSON()
 }
 
+//fechas
+function fechas() {
+  if (this.options != undefined) {
+    maxdate = this.options[this.selectedIndex].value;
+  }
+  leerJSON()
+}
+
+function llenarfechas() {
+  $.ajax({
+    url: 'csvjson.json', //escribe el nombre del archivo
+    dataType: 'json',
+
+    success: function (a) {
+      maxdate = a[a.length-1].Fecha;
+      for (let i = a.length-1; i > 0; i--) {
+        if (a[i]["CCAA Codigo ISO"] == "RI") {
+          document.getElementById("fechas").innerHTML += "<option value=\"" + a[i].Fecha + "\">" + a[i].Fecha + "</option>;"
+        }
+      }
+    },
+    error: function (xhr) {
+      alert("An AJAX error occured: " + xhr.status + " " + xhr.statusText);
+    }
+  });
+}
 //esta diseñado para convertir cualquier json en una tabla
-function leerJSON(opcion) {
+function leerJSON() {
 
   $.ajax({
-    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
+    url: 'csvjson.json', //escribe el nombre del archivo
     dataType: 'json',
 
     success: function (a) {
@@ -80,21 +110,6 @@ function leerJSON(opcion) {
       var sumacasos = 0;
       var sumafallecidos = 0;
       var sumarecuperados = 0;
-
-      //date
-      var dateanterior=date;
-      for (let i = 0; i < a.length; i++) {
-        var dates=a[i].Fecha;
-        dates=dates.split("/");
-        var date=new Date();
-        date.setDate(dates[0],dates[1],dates[2]);
-        if(date>dateanterior){
-          var datemax=dates[0]+"/"+dates[1]+"/"+dates[2];
-        }
-        dateanterior=date;
-        
-      }
-      console.log(datemax);
 
       //fill table head
       var head = "<tr>";
@@ -110,23 +125,21 @@ function leerJSON(opcion) {
         body += "<tr>";
         for (let j = 0; j < Object.keys(a[i]).length; j++) {
           var nomficha = Object.keys(a[i])[j];
-          if (a[i].Fecha == datemax ) {
+          if (a[i].Fecha == maxdate) {
             if (opcion == a[i]["CCAA Codigo ISO"]) {
               if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
                 body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
               } else {
                 body += "<td>" + a[i][nomficha] + "</td>";
               }
-            }else if(opcion=="todos"){
+            } else if (opcion == "todos") {
               if (typeof a[i][nomficha] === "string" && a[i][nomficha].includes("http")) {
                 body += "<td><img src=\"" + a[i][nomficha] + "\" class=\"img-fluid\" style=\"height:200px;\"></img></td>";
               } else {
                 body += "<td>" + a[i][nomficha] + "</td>";
               }
             }
-
           }
-          dateanterior=date[i]
         }
         body += "</tr>";
 
@@ -135,7 +148,7 @@ function leerJSON(opcion) {
           casos.push(a[i].Casos);
           fallecidos.push(a[i].Fallecidos);
           recuperados.push(a[i].Recuperados);
-        } else if(opcion == "todos"){
+        } else if (opcion == "todos") {
           //Eliminar NaN
           if (a[i].Casos > 0) {
             sumacasos += a[i].Casos;
@@ -162,7 +175,7 @@ function leerJSON(opcion) {
       }
 
       //display
-      document.getElementById("chartContent").innerHTML="<canvas class=\"mb-3\" id=\"myChart\"></canvas>"
+      document.getElementById("chartContent").innerHTML = "<canvas class=\"mb-3\" id=\"myChart\"></canvas>"
       document.getElementById("table").innerHTML = head + body;
       grafico(fecha, casos, fallecidos, recuperados);
     },
