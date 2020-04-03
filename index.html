@@ -22,6 +22,11 @@
       color: #f2ed6f;
       text-decoration: none;
     }
+    canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
   </style>
 </head>
 
@@ -29,7 +34,7 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-xl-10">
-        <h1 class="text-light text-center font-weight-normal">Casos de COVID-19</h1>
+        <h2 class="text-light text-center font-weight-normal">Casos de COVID-19</h2>
         <div id="chartContent" class="mb-3" style="max-height: 70vh; height: 50vw; width: 100%;">
           <canvas class="mb-3" id="myChart"></canvas>
         </div>

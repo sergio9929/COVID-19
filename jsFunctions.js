@@ -1,4 +1,4 @@
-var opcion="todos";
+var opcion = "todos";
 var maxdate;
 document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
@@ -19,10 +19,10 @@ function grafico(fecha, casos, fallecidos, recuperados) {
         label: 'fallecidos',
         data: fallecidos,
         backgroundColor: [
-          'rgba(	236, 228, 39, .7)'
+          'rgba(236, 228, 39, .7)'
         ],
         borderColor: [
-          'rgba(242, 237, 111, .5)',
+          'rgba(236, 228, 39, .7)',
         ],
         borderWidth: 1
       }, {
@@ -49,12 +49,26 @@ function grafico(fecha, casos, fallecidos, recuperados) {
     },
     options: {
       responsive: true,
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+        position: "nearest",
+        callbacks: {
+          labelColor: function (tooltipItem, chart) {
+            var dataset = chart.config.data.datasets[tooltipItem.datasetIndex];
+            return {
+              backgroundColor: dataset.backgroundColor
+            }
+          }
+        }
+      },
       maintainAspectRatio: false,
       scales: {
         yAxes: [{
+          display: true,
           ticks: {
             beginAtZero: true
-          }
+          },
         }]
       }
     }
@@ -79,12 +93,12 @@ function fechas() {
 
 function llenarfechas() {
   $.ajax({
-    url: 'csvjson.json', //escribe el nombre del archivo
+    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
     dataType: 'json',
 
     success: function (a) {
-      maxdate = a[a.length-1].Fecha;
-      for (let i = a.length-1; i > 0; i--) {
+      maxdate = a[a.length - 1].Fecha;
+      for (let i = a.length - 1; i > 0; i--) {
         if (a[i]["CCAA Codigo ISO"] == "RI") {
           document.getElementById("fechas").innerHTML += "<option value=\"" + a[i].Fecha + "\">" + a[i].Fecha + "</option>;"
         }
