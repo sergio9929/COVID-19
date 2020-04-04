@@ -80,7 +80,10 @@ function grafico(fecha, casos, fallecidos, recuperados) {
 //select
 function select() {
   if (this.options != undefined) {
-    opcion = this.options[this.selectedIndex].value;
+    opcion = this.options[this.selectedIndex].text;
+    if(this.options[this.selectedIndex].value=="todos"){
+      opcion = this.options[this.selectedIndex].value;
+    }
   }
   leerJSON()
 }
@@ -157,6 +160,10 @@ function leerJSON() {
       //fill table body
       var body = "";
       for (let i = 0; i < a.length; i++) {
+
+        //Rename
+        a[i]["CCAA Codigo ISO"]=renombrar(a[i]["CCAA Codigo ISO"]);
+
         if (tipografico == "total") {
           body += "<tr>";
           if (a[i].Fecha == maxdate) {
@@ -182,7 +189,6 @@ function leerJSON() {
               let q3 = a[i].UCI - a[i - 19].UCI;
               let q4 = a[i].Fallecidos - a[i - 19].Fallecidos;
               let q5 = a[i].Recuperados - a[i - 19].Recuperados;
-
               body += "<tr><td>" + a[i]["CCAA Codigo ISO"] + "</td><td>" + a[i].Fecha + "</td><td>" + q1 + "</td><td>" + q2 + "</td><td>" + q3 + "</td><td>" + q4 + "</td><td>" + q5 + "</td></tr>";
             }
           }
@@ -214,7 +220,7 @@ function leerJSON() {
           }
 
           //suma
-          if (a[i]["CCAA Codigo ISO"] == "RI") {
+          if (a[i]["CCAA Codigo ISO"] == "La Rioja") {
             fecha.push(a[i].Fecha);
             casos.push(sumacasos);
             fallecidos.push(sumafallecidos);
@@ -266,4 +272,66 @@ function leerJSON() {
       alert("An AJAX error occured: " + xhr.status + " " + xhr.statusText);
     }
   });
+}
+
+function renombrar(a){
+  switch (a) {
+    case 'AN':
+      a = "Andalucía";
+      break;
+    case 'AR':
+      a = "Aragón";
+      break;
+    case 'AS':
+      a = "Principado de Asturias";
+      break;
+    case 'IB':
+      a = "Islas Baleares";
+      break;
+    case 'CN':
+      a = "Canarias";
+      break;
+    case 'CB':
+      a = "Cantabria";
+      break;
+    case 'CM':
+      a = "Castilla La Mancha";
+      break;
+    case 'CL':
+      a = "Castilla y León";
+      break;
+    case 'CT':
+      a = "Cataluña";
+      break;
+    case 'CE':
+      a = "Ceuta";
+      break;
+    case 'VC':
+      a = "Comunidad Valenciana";
+      break;
+    case 'EX':
+      a = "Extremadura";
+      break;
+    case 'GA':
+      a = "Galicia";
+      break;
+    case 'MD':
+      a = "Comunidad de Madrid";
+      break;
+    case 'ME':
+      a = "Melilla";
+      break;
+    case 'MC':
+      a = "Región de Murcia";
+      break;
+    case 'NC':
+      a = "Comunidad Foral de Navarra";
+      break;
+    case 'PV':
+      a = "País Vasco";
+      break;
+    case 'RI':
+      a = "La Rioja";
+  }
+  return a;
 }
