@@ -1,4 +1,4 @@
-const csvPath="shttps://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
+const csvPath="https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
