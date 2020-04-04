@@ -1,7 +1,7 @@
+const csvPath="serie_historica_acumulados.csv"; //escribe el nombre del archivo
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
-
 document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
   leerJSON();
@@ -107,7 +107,7 @@ function cambiargrafico() {
 
 function llenarfechas() {
   $.ajax({
-    url: "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv", //escribe el nombre del archivo
+    url: csvPath,
     dataType: 'text',
 
     success: function (data) {
@@ -168,7 +168,7 @@ function csvObject(csv) {
 function leerJSON() {
 
   $.ajax({
-    url: "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv", //escribe el nombre del archivo
+    url: csvPath,
     dataType: 'text',
 
     success: function (data) {
