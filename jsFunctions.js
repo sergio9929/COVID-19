@@ -1,12 +1,9 @@
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
-var casosdiarios = [];
-var fallecidosdiarios = [];
-var recuperadosdiarios = [];
+
 document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
-  select();
   leerJSON();
   document.getElementById("select").addEventListener("change", select);
   document.getElementById("fechas").addEventListener("change", fechas);
@@ -117,6 +114,7 @@ function llenarfechas() {
         }
       }
     },
+
     error: function (xhr) {
       alert("An AJAX error occured: " + xhr.status + " " + xhr.statusText);
     }
@@ -126,7 +124,7 @@ function llenarfechas() {
 function leerJSON() {
 
   $.ajax({
-    url: 'csvjson.json', //escribe el nombre del archivo
+    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
     dataType: 'json',
 
     success: function (a) {
@@ -135,9 +133,18 @@ function leerJSON() {
       var casos = []
       var fallecidos = []
       var recuperados = []
+      var casosdiarios = [];
+      var hospitalizados = [];
+      var uci = [];
+      var fallecidosdiarios = [];
+      var recuperadosdiarios = [];
+      var hospitalizadosdiarios = [];
+      var ucidiarios = [];
       var sumacasos = 0;
       var sumafallecidos = 0;
       var sumarecuperados = 0;
+      var sumahospitalizados = 0;
+      var sumauci = 0;
 
       //fill table head
       var head = "<tr>";
@@ -171,9 +178,12 @@ function leerJSON() {
             provincias = document.getElementById("select").options;
             if (a[i].Fecha == maxdate) {
               let q1 = a[i].Casos - a[i - 19].Casos;
-              let q2=a[i].Fallecidos-a[i-19].Fallecidos;
-              let q3=a[i].Recuperados-a[i-19].Recuperados;
-              body += "<tr><td>" + a[i]["CCAA Codigo ISO"] + "</td><td>" + a[i].Fecha + "</td><td>" + q1 + "</td><td></td><td></td><td>" + q2 + "</td><td>" + q3 + "</td></tr>";
+              let q2 = a[i].Hospitalizados - a[i - 19].Hospitalizados;
+              let q3 = a[i].UCI - a[i - 19].UCI;
+              let q4 = a[i].Fallecidos - a[i - 19].Fallecidos;
+              let q5 = a[i].Recuperados - a[i - 19].Recuperados;
+
+              body += "<tr><td>" + a[i]["CCAA Codigo ISO"] + "</td><td>" + a[i].Fecha + "</td><td>" + q1 + "</td><td>" + q2 + "</td><td>" + q3 + "</td><td>" + q4 + "</td><td>" + q5 + "</td></tr>";
             }
           }
         }
@@ -182,6 +192,8 @@ function leerJSON() {
           casos.push(a[i].Casos);
           fallecidos.push(a[i].Fallecidos);
           recuperados.push(a[i].Recuperados);
+          hospitalizados.push(a[i].Hospitalizados);
+          uci.push(a[i].UCI);
         } else if (opcion == "todos") {
 
           //Eliminar NaN
@@ -194,6 +206,12 @@ function leerJSON() {
           if (a[i].Recuperados > 0) {
             sumarecuperados += a[i].Recuperados;
           }
+          if (a[i].Recuperados > 0) {
+            sumahospitalizados += a[i].Hospitalizados;
+          }
+          if (a[i].UCI > 0) {
+            sumauci += a[i].UCI;
+          }
 
           //suma
           if (a[i]["CCAA Codigo ISO"] == "RI") {
@@ -201,12 +219,17 @@ function leerJSON() {
             casos.push(sumacasos);
             fallecidos.push(sumafallecidos);
             recuperados.push(sumarecuperados);
+            hospitalizados.push(sumahospitalizados);
+            uci.push(sumauci);
             if (maxdate == a[i].Fecha && sumacasos > 0 && tipografico == "total") {
-              displaytotal = "<tr><th>TOTAL</th><td></td><td>" + sumacasos + "</td><td></td><td></td><td>" + sumafallecidos + "</td><td>" + sumarecuperados + "</td></tr>";
+              displaytotal = "<tr><th>TOTAL</th><td>" + maxdate + "</td><td>" + sumacasos + "</td><td>" + sumahospitalizados + "</td><td>" + sumauci + "</td><td>" + sumafallecidos + "</td><td>" + sumarecuperados + "</td></tr>";
             }
+
             sumacasos = 0;
             sumafallecidos = 0;
             sumarecuperados = 0;
+            sumahospitalizados = 0;
+            sumauci = 0;
           }
         }
       }
@@ -216,11 +239,13 @@ function leerJSON() {
           casosdiarios[i] = casos[i] - casos[i - 1];
           recuperadosdiarios[i] = recuperados[i] - recuperados[i - 1];
           fallecidosdiarios[i] = fallecidos[i] - fallecidos[i - 1];
+          hospitalizadosdiarios[i] = hospitalizados[i] - hospitalizados[i - 1];
+          ucidiarios[i] = uci[i] - uci[i - 1];
           if (maxdate == fecha[i]) {
             if (opcion != "todos") {
-              body += "<tr><td>" + opcion + "</td><td>" + fecha[i] + "</td><td>" + casosdiarios[i] + "</td><td></td><td></td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
+              body += "<tr><td>" + opcion + "</td><td>" + fecha[i] + "</td><td>" + casosdiarios[i] + "</td><td>" + hospitalizadosdiarios[i] + "</td><td>" + ucidiarios[i] + "</td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
             } else {
-              displaytotal = "<tr><th>TOTAL</th><td></td><td>" + casosdiarios[i] + "</td><td></td><td></td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
+              displaytotal = "<tr><th>TOTAL</th><td>" + fecha[i] + "</td><td>" + casosdiarios[i] + "</td><td>" + hospitalizadosdiarios[i] + "</td><td>" + ucidiarios[i] + "</td><td>" + fallecidosdiarios[i] + "</td><td>" + recuperadosdiarios[i] + "</td></tr>";
             }
           }
         }
@@ -228,6 +253,8 @@ function leerJSON() {
         casos = casosdiarios;
         fallecidos = fallecidosdiarios;
         recuperados = recuperadosdiarios;
+        hospitalizados = hospitalizadosdiarios;
+        uci = ucidiarios;
       }
 
       //display
