@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
   document.getElementById("fechas").addEventListener("change", fechas);
   document.getElementById("grafico").addEventListener("change", cambiargrafico);
 })
+
 function grafico(fecha, casos, fallecidos, recuperados) {
   Chart.defaults.global.defaultFontColor = 'white';
   Chart.defaults.global.defaultFontFamily = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"';
@@ -81,7 +82,7 @@ function grafico(fecha, casos, fallecidos, recuperados) {
 function select() {
   if (this.options != undefined) {
     opcion = this.options[this.selectedIndex].text;
-    if(this.options[this.selectedIndex].value=="todos"){
+    if (this.options[this.selectedIndex].value == "todos") {
       opcion = this.options[this.selectedIndex].value;
     }
   }
@@ -106,10 +107,11 @@ function cambiargrafico() {
 
 function llenarfechas() {
   $.ajax({
-    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
-    dataType: 'json',
+    url: "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv", //escribe el nombre del archivo
+    dataType: 'text',
 
-    success: function (a) {
+    success: function (data) {
+      var a = csvObject(data);
       maxdate = a[a.length - 1].Fecha;
       for (let i = a.length - 1; i > 0; i--) {
         if (a[i]["CCAA Codigo ISO"] == "RI") {
@@ -123,14 +125,54 @@ function llenarfechas() {
     }
   });
 }
+
+function csvObject(csv) {
+  var lines = csv.split("\n");
+  var result = [];
+  var headers = lines[0].split(",");
+
+  //correccion
+  headers[2] = "Casos";
+  var parar = false;
+
+  for (var i = 1; i < lines.length; i++) {
+
+    //correccion
+    if (lines[i].startsWith('NOTA:')) {
+      parar = true;
+    }
+    var obj = {};
+    var currentline = lines[i].split(",");
+    for (var j = 0; j < headers.length; j++) {
+      if (currentline[j].startsWith("NOTA:")) {
+        i = lines.length - 1;
+        j = headers.length;
+        var eliminar = true;
+      } else {
+        obj[headers[j]] = currentline[j];
+      }
+
+    }
+    if (eliminar != true) {
+      result.push(obj);
+    }
+
+  }
+
+  //return result; //JavaScript object
+  return result; //JSON
+
+}
+
 //esta diseñado para convertir cualquier json en una tabla
 function leerJSON() {
 
   $.ajax({
-    url: 'https://raw.githubusercontent.com/sergio9929/COVID-19/master/csvjson.json', //escribe el nombre del archivo
-    dataType: 'json',
+    url: "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv", //escribe el nombre del archivo
+    dataType: 'text',
 
-    success: function (a) {
+    success: function (data) {
+      var a = csvObject(data);
       var displaytotal = "";
       var fecha = []
       var casos = []
@@ -162,7 +204,7 @@ function leerJSON() {
       for (let i = 0; i < a.length; i++) {
 
         //Rename
-        a[i]["CCAA Codigo ISO"]=renombrar(a[i]["CCAA Codigo ISO"]);
+        a[i]["CCAA Codigo ISO"] = renombrar(a[i]["CCAA Codigo ISO"]);
 
         if (tipografico == "total") {
           body += "<tr>";
@@ -204,19 +246,19 @@ function leerJSON() {
 
           //Eliminar NaN
           if (a[i].Casos > 0) {
-            sumacasos += a[i].Casos;
+            sumacasos += parseInt(a[i].Casos);
           }
           if (a[i].Fallecidos > 0) {
-            sumafallecidos += a[i].Fallecidos;
+            sumafallecidos += parseInt(a[i].Fallecidos);
           }
           if (a[i].Recuperados > 0) {
-            sumarecuperados += a[i].Recuperados;
+            sumarecuperados += parseInt(a[i].Recuperados);
           }
           if (a[i].Recuperados > 0) {
-            sumahospitalizados += a[i].Hospitalizados;
+            sumahospitalizados += parseInt(a[i].Hospitalizados);
           }
           if (a[i].UCI > 0) {
-            sumauci += a[i].UCI;
+            sumauci += parseInt(a[i].UCI);
           }
 
           //suma
@@ -274,7 +316,7 @@ function leerJSON() {
   });
 }
 
-function renombrar(a){
+function renombrar(a) {
   switch (a) {
     case 'AN':
       a = "Andalucía";
