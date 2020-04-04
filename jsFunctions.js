@@ -1,4 +1,4 @@
-const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
+const csvPath="https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
 var opcion = "todos";
 var maxdate = "20/2/2020";
 var tipografico = "total";
@@ -135,7 +135,7 @@ function csvObject(csv) {
   headers[0] = "CCAA Codigo ISO";
   for (let i = 1; i < headers.length; i++) {
     if (i > 0) {
-      headers[i] = headers[i].replace(/ /g, '');
+      headers[i] = headers[i].trim();
     }
   }
 
