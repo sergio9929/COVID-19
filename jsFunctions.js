@@ -1,6 +1,6 @@
-const csvPath="https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
+const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv"; //escribe el nombre del archivo
 var opcion = "todos";
-var maxdate = "20/02/2020";
+var maxdate = "20/2/2020";
 var tipografico = "total";
 document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
@@ -132,18 +132,19 @@ function csvObject(csv) {
   var headers = lines[0].split(",");
 
   //correccion
-  headers[2] = "Casos";
-  var parar = false;
-
-  for (var i = 1; i < lines.length; i++) {
-
-    //correccion
-    if (lines[i].startsWith('NOTA:')) {
-      parar = true;
+  headers[0] = "CCAA Codigo ISO";
+  for (let i = 1; i < headers.length; i++) {
+    if (i > 0) {
+      headers[i] = headers[i].replace(/ /g, '');
     }
+  }
+
+  for (let i = 1; i < lines.length; i++) {
     var obj = {};
     var currentline = lines[i].split(",");
-    for (var j = 0; j < headers.length; j++) {
+    for (let j = 0; j < headers.length; j++) {
+
+      //correccion
       if (currentline[j].startsWith("NOTA:")) {
         i = lines.length - 1;
         j = headers.length;
@@ -151,14 +152,12 @@ function csvObject(csv) {
       } else {
         obj[headers[j]] = currentline[j];
       }
-
     }
+
     if (eliminar != true) {
       result.push(obj);
     }
-
   }
-
   //return result; //JavaScript object
   return result; //JSON
 
@@ -254,7 +253,7 @@ function leerJSON() {
           if (a[i].Recuperados > 0) {
             sumarecuperados += parseInt(a[i].Recuperados);
           }
-          if (a[i].Recuperados > 0) {
+          if (a[i].Hospitalizados > 0) {
             sumahospitalizados += parseInt(a[i].Hospitalizados);
           }
           if (a[i].UCI > 0) {
@@ -269,6 +268,7 @@ function leerJSON() {
             recuperados.push(sumarecuperados);
             hospitalizados.push(sumahospitalizados);
             uci.push(sumauci);
+
             if (maxdate == a[i].Fecha && sumacasos > 0 && tipografico == "total") {
               displaytotal = "<tr><th>TOTAL</th><td>" + maxdate + "</td><td>" + sumacasos + "</td><td>" + sumahospitalizados + "</td><td>" + sumauci + "</td><td>" + sumafallecidos + "</td><td>" + sumarecuperados + "</td></tr>";
             }
