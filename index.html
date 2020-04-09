@@ -10,95 +10,69 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-  <style>
-    a {
-      color: #d7385e;
-    }
-
-    a:hover,
-    a:active {
-      color: #f2ed6f;
-      text-decoration: none;
-    }
-
-    canvas {
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-    }
-
-    select {
-      background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px !important;
-    }
-
-    select:focus {
-      border-color: none !important;
-      box-shadow: none !important;
-      outline: none !important;
-      border: 1px solid white !important;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="bg-dark">
   <div class="container-fluid">
-    <div id="employee_table"></div>
     <div class="row justify-content-center">
       <div class="col-xl-10">
-        <h2 class="text-light text-center font-weight-normal">Casos de COVID-19</h2>
-        <div id="chartContent" class="mb-3" style="max-height: 70vh; height: 50vw; width: 100%;">
-          <canvas class="mb-3" id="myChart"></canvas>
+        <h2 id="titulo" class="text-center font-weight-normal pt-1">Casos de COVID-19</h2>
+        <div id="chartContent" class="mb-3">
+          <canvas id="myChart"></canvas>
         </div>
-        <form action="">
-          <div class="row">
-            <div class="col form-group pr-0">
-              <select class="form-control custom-select bg-dark text-light" name="" id="select">
-                <option selected value="todos">Todas las provincias</option>
-                <option value="AN">Andalucía</option>
-                <option value="AR">Aragón</option>
-                <option value="AS">Principado de Asturias</option>
-                <option value="IB">Islas Baleares</option>
-                <option value="CN">Canarias</option>
-                <option value="CB">Cantabria</option>
-                <option value="CM">Castilla La Mancha</option>
-                <option value="CL">Castilla y León</option>
-                <option value="CT">Cataluña</option>
-                <option value="CE">Ceuta</option>
-                <option value="VC">Comunidad Valenciana</option>
-                <option value="EX">Extremadura</option>
-                <option value="GA">Galicia</option>
-                <option value="MD">Comunidad de Madrid</option>
-                <option value="ME">Melilla</option>
-                <option value="MC">Región de Murcia</option>
-                <option value="NC">Comunidad Foral de Navarra</option>
-                <option value="PV">País Vasco</option>
-                <option value="RI">La Rioja</option>
-              </select>
-            </div>
-            <div class="col form-group">
-              <select class="form-control custom-select bg-dark text-light" name="" id="fechas"></select>
+        <div class="row mb-3">
+          <div class="btn-group col pr-0">
+            <button id="selectboton" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">Todas las CCAA</button>
+            <div id="select" class="dropdown-menu w1 bg-dark">
+              <a class="dropdown-item" href="#" name="todos">Todas las CCAA</a>
+              <a class="dropdown-item" href="#" name="AN">Andalucía</a>
+              <a class="dropdown-item" href="#" name="AR">Aragón</a>
+              <a class="dropdown-item" href="#" name="AS">Principado de Asturias</a>
+              <a class="dropdown-item" href="#" name="IB">Islas Baleares</a>
+              <a class="dropdown-item" href="#" name="CN">Canarias</a>
+              <a class="dropdown-item" href="#" name="CB">Cantabria</a>
+              <a class="dropdown-item" href="#" name="CM">Castilla La Mancha</a>
+              <a class="dropdown-item" href="#" name="CL">Castilla y León</a>
+              <a class="dropdown-item" href="#" name="CT">Cataluña</a>
+              <a class="dropdown-item" href="#" name="CE">Ceuta</a>
+              <a class="dropdown-item" href="#" name="VC">Comunidad Valenciana</a>
+              <a class="dropdown-item" href="#" name="EX">Extremadura</a>
+              <a class="dropdown-item" href="#" name="GA">Galicia</a>
+              <a class="dropdown-item" href="#" name="MD">Comunidad de Madrid</a>
+              <a class="dropdown-item" href="#" name="ML">Melilla</a>
+              <a class="dropdown-item" href="#" name="MC">Región de Murcia</a>
+              <a class="dropdown-item" href="#" name="NC">Comunidad Foral de Navarra</a>
+              <a class="dropdown-item" href="#" name="PV">País Vasco</a>
+              <a class="dropdown-item" href="#" name="RI">La Rioja</a>
             </div>
           </div>
-          <div class="form-group">
-            <select class="form-control custom-select bg-dark text-light" name="" id="grafico">
-              <option value="total">Casos totales</option>
-              <option value="diario">Casos diarios</option>
-            </select>
+          <div class="btn-group col">
+            <button id="fechasboton" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">Fechas</button>
+            <div id="fechas" class="dropdown-menu w2 bg-dark"></div>
           </div>
-        </form>
-        <div class="table-responsive-md">
-          <table id="table" class="table table-striped table-dark w-100"></table>
-          <table id="table2" class="table table-striped table-dark w-100"></table>
         </div>
-        </table>
+        <div class="row mb-3">
+          <div class="btn-group col">
+            <button id="graficoboton" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">Casos Totales</button>
+            <div id="grafico" class="dropdown-menu w3 bg-dark">
+              <a class="dropdown-item" href="#" name="total">Casos totales</a>
+              <a class="dropdown-item" href="#" name="diario">Casos diarios</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive rounded">
+          <table id="table" class="table table-dark w-100 mb-3 rounded"></table>
+        </div>
       </div>
     </div>
     <div class="row p-5">
       <div class="col text-center">
-        <a href="https://www.mscbs.gob.es/en/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm"
-          target="_blank">
-          Fuente</a>
+        <a id="fuente" href="https://www.mscbs.gob.es/en/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm" target="_blank">Fuente</a>
       </div>
     </div>
 
