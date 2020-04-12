@@ -1,5 +1,5 @@
 console.log("hola")
-const csvPath="https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv";
+const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv";
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
@@ -7,23 +7,23 @@ document.addEventListener("DOMContentLoaded", function (event) {
   llenarfechas();
   habilitarbotones()
 })
-function habilitarbotones(){
-$("#grafico a").on("click",function(e){
-  $("#graficoboton").text(this.text);
-  tipografico=this["name"]
-  leerJSON()  
-});
-$("#select a").on("click",function(e){
-  $("#selectboton").text(this.text);
-  opcion=this["text"]
-  this["name"] == "todos" ? opcion = this["name"] : opcion=this["text"]
-  leerJSON()
-});
-$("#fechas a").on("click",function(e){
-  $("#fechasboton").text(this.text);
-  maxdate = this["name"]
-  leerJSON()
-});
+function habilitarbotones() {
+  $("#grafico a").on("click", function (e) {
+    $("#graficoboton").text(this.text);
+    tipografico = this["name"]
+    leerJSON()
+  });
+  $("#select a").on("click", function (e) {
+    $("#selectboton").text(this.text);
+    opcion = this["text"]
+    this["name"] == "todos" ? opcion = this["name"] : opcion = this["text"]
+    leerJSON()
+  });
+  $("#fechas a").on("click", function (e) {
+    $("#fechasboton").text(this.text);
+    maxdate = this["name"]
+    leerJSON()
+  });
 }
 
 function grafico(fecha, casos, fallecidos, recuperados, activos) {
@@ -108,10 +108,10 @@ function llenarfechas() {
 
     success: function (data) {
       var a = csvObject(data);
-      maxdate = a[a.length - 4].fecha;
+      maxdate = a[a.length - 8].fecha;
       for (let i = a.length - 1; i > 0; i--) {
         if (a[i].ccaa == "RI") {
-          document.getElementById("fechas").innerHTML += "<a class=\"dropdown-item\" href=\"#\" name=\"" + a[i].fecha + "\">" + a[i].fecha + "</a>";         
+          document.getElementById("fechas").innerHTML += "<a class=\"dropdown-item\" href=\"#\" name=\"" + a[i].fecha + "\">" + a[i].fecha + "</a>";
         }
       }
       habilitarbotones()
@@ -140,24 +140,19 @@ function csvObject(csv) {
   for (let i = 1; i < lines.length; i++) {
     var obj = {};
     var currentline = lines[i].split(",");
-    for (let j = 0; j < 7; j++) {
 
-      //correccion
-      if (currentline[j].startsWith("NOTA:")) {
-        i = lines.length - 1;
-        j = headers.length;
-        var eliminar = true;
-      } else {
+    //correccion
+    if (currentline[0].startsWith("NOTA:")) {
+      i = lines.length - 1;
+    } else {
+      for (let j = 0; j < 7; j++) {
         obj[headers[j]] = currentline[j];
       }
-    }
-
-    if (eliminar != true) {
       result.push(obj);
     }
   }
+  console.log(result)
   return result; //JavaScript object
-
 }
 
 //esta diseñado para convertir cualquier json en una tabla

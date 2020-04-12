@@ -80,30 +80,6 @@
     background-color: var(--dark1)!important;
 }
 
-.drag { 
-    background-color: none;
-    top: 3px;
-    left: 3px;
-    display: block;
-    position: absolute;
-    width: calc(100% - 126px);
-    height: 17px;
-    -webkit-app-region: drag;
-    z-index: -100;
-  }
-
-.controles {
-    width: 40px;
-    height: 100%;
-    text-align: center;
-    line-height: 0px;
-}
-
-.controles:hover, .controles:active {
-    background-color: #000000;
-    text-decoration: none;
-}
-
 .icon {
     height: 20px;
     width: 40px;
@@ -111,10 +87,6 @@
     stroke: #ced4da;
     stroke-width: 1px;
     fill: #ced4da;
-}
-
-.circle-left{
-    border-radius: 5px 0px 0px 5px;
 }
 
 .icon:hover, .icon:active {
