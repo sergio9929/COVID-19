@@ -142,15 +142,18 @@ function csvObject(csv) {
     var currentline = lines[i].split(",");
 
     //correccion
-    if (currentline[0].startsWith("NOTA:")) {
-      i = lines.length - 1;
+    // if (currentline[0].startsWith("NOTA")) {
+    //   i = lines.length - 1;
+    if (currentline[1] == "") {
+      obj[headers[0]] = currentline[0];
     } else {
       for (let j = 0; j < 7; j++) {
         obj[headers[j]] = currentline[j];
       }
-      result.push(obj);
     }
+    result.push(obj);
   }
+
   return result; //JavaScript object
 }
 
@@ -283,10 +286,18 @@ function leerJSON() {
         uci.cantidad = uci.diarios;
         activos.cantidad = activos.diarios;
       }
+      
+      var notas="<p class='font-weight-bold mt-4'>Notas del Gobierno:</p>";
+      for (let i = a.length - 15; i < a.length; i++) {
+        if (Object.keys(a[i]).length == 1) {
+          notas += "<p>" + a[i].ccaa + "</p>";
+        }
+      }
 
       //display
       document.getElementById("chartContent").innerHTML = "<canvas id=\"myChart\"></canvas>";
       document.getElementById("table").innerHTML = head + body + displaytotal;
+      document.getElementById("notas").innerHTML += notas;
       grafico(fecha, casos.cantidad, fallecidos.cantidad, recuperados.cantidad, activos.cantidad);
     },
     error: function (xhr) {

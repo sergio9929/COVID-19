@@ -147,3 +147,7 @@ canvas {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+p{
+    margin-bottom: .75rem;
+}
