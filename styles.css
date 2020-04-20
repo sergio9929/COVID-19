@@ -3,9 +3,46 @@
     --dark2: #1B1E21;
     --dark3: #23272B;
     --dark4: #2F3439;
-    --red: #D7385E;
-    --blue: #28BDE5;
-    --yellow: #E5DA55;
+    --red: rgb(215, 56, 94);
+    --blue: rgba(40 ,189 ,229, .7);
+    --yellow: rgba(227 ,214 ,34, .7);
+}
+
+.dark{
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.darkest{
+    background-color: var(--dark1);
+}
+.red{
+    background-color: var(--red);
+}
+.yellow{
+    background-color: var(--yellow);
+}
+.blue{
+    background-color: var(--blue);
+}
+
+#chartjs-tooltip {
+    opacity: 1;
+    position: absolute;
+    background: rgba(27, 30, 33, 0.8);
+    color: white;
+    border-radius: 3px;
+    -webkit-transition: all .1s ease;
+    transition: all .1s ease;
+    pointer-events: none;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.chartjs-tooltip-key {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    border: 1px solid var(--dark);
 }
 
 *{
@@ -117,20 +154,6 @@ table tr:last-child td:last-child {
 
 .table, .table td, .table th{
     border: none!important;
-}
-
-.red{
-    background-color: var(--red);
-}
-
-.dark{
-    background-color: rgba(0, 0, 0, 0.1);
-}
-.yellow{
-    background-color: rgba(227,214,34,.7);
-}
-.blue{
-    background-color: rgba(40,189,229,.7);
 }
 
 a {

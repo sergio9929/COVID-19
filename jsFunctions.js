@@ -37,55 +37,120 @@ function grafico(fecha, casos, fallecidos, recuperados, activos) {
       datasets: [{
         label: 'fallecidos',
         data: fallecidos,
-        backgroundColor: [
-          'rgba(255,200,0,.7)',
-        ],
-        borderColor: [
-          'rgba(255,200,0,.7)',
-        ],
-        borderWidth: 1
+        backgroundColor: 'rgba(255,200,0,.7)',
+        borderColor: 'rgba(255,200,0,.7)',
+        borderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 4,
       }, {
         label: 'recuperados',
         data: recuperados,
-        backgroundColor: [
-          'rgba(40,189,229,.7)',
-        ],
-        borderColor: [
-          'rgba(40,189,229,.7)',
-        ],
-        borderWidth: 1
+        backgroundColor: 'rgba(40,189,229,.7)',
+        borderColor: 'rgba(40,189,229,.7)',
+        borderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 4,
       }, {
         label: 'activos',
         data: activos,
-        backgroundColor: [
-          '#d7385e',
-        ],
-        borderColor: [
-          '#d7385e',
-        ],
-        borderWidth: 1
+        backgroundColor: '#d7385e',
+        borderColor: '#d7385e',
+        borderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 4,
       }, {
         label: 'casos',
         data: casos,
-        borderColor: [
-          '#d7385e',
-        ],
-        borderWidth: 2
+        borderColor: '#d7385e',
+        backgroundColor: 'rgba(0, 0, 0,.15)',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 4,
       },]
     },
     options: {
       responsive: true,
       tooltips: {
+        enabled: false,
         mode: 'index',
         intersect: false,
         position: "nearest",
-        callbacks: {
-          labelColor: function (tooltipItem, chart) {
-            var dataset = chart.config.data.datasets[tooltipItem.datasetIndex];
-            return {
-              backgroundColor: dataset.backgroundColor
-            }
+
+        custom: function (tooltipModel) {
+          // Tooltip Element
+          var tooltipEl = document.getElementById('chartjs-tooltip');
+
+          // Create element on first render
+          if (!tooltipEl) {
+            tooltipEl = document.createElement('div');
+            tooltipEl.id = 'chartjs-tooltip';
+            tooltipEl.innerHTML = '<table></table>';
+            document.body.appendChild(tooltipEl);
           }
+
+          // Hide if no tooltip
+          if (tooltipModel.opacity === 0) {
+            tooltipEl.style.opacity = 0;
+            return;
+          }
+
+          // Set caret Position
+          tooltipEl.classList.remove('above', 'below', 'no-transform');
+          if (tooltipModel.yAlign) {
+            tooltipEl.classList.add(tooltipModel.yAlign);
+          } else {
+            tooltipEl.classList.add('no-transform');
+          }
+
+          function getBody(bodyItem) {
+            return bodyItem.lines;
+          }
+
+          // Set Text
+          if (tooltipModel.body) {
+            var titleLines = tooltipModel.title || [];
+            var bodyLines = tooltipModel.body.map(getBody);
+
+            var innerHtml = '<thead>';
+
+            titleLines.forEach(function (title) {
+              innerHtml += '<tr><th>' + title + '</th></tr>';
+            });
+            innerHtml += '</thead><tbody>';
+
+            bodyLines.forEach(function (body, i) {
+              var colors = tooltipModel.labelColors[i];
+              var style = 'background:' + colors.backgroundColor;
+              style += '; border-color:' + colors.borderColor;
+              style += '; border-width: 2px';
+              var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+              innerHtml += '<tr><td>' + span + body + '</td></tr>';
+            });
+            innerHtml += '</tbody>';
+
+            var tableRoot = tooltipEl.querySelector('table');
+            tableRoot.innerHTML = innerHtml;
+          }
+
+          // `this` will be the overall tooltip
+          var position = this._chart.canvas.getBoundingClientRect();
+
+          // Display, position, and set styles for font
+          tooltipEl.style.opacity = 1;
+          tooltipEl.style.position = 'absolute';
+          // tooltipEl.style.left = window.innerWidth - tooltipModel.width - 25 + 'px';
+          // let keke = (window.innerWidth - tooltipModel.caretX - 35) * -1 + tooltipModel.width / 2;
+          // if (keke > 0) { keke = 0 }
+          // tooltipEl.style.transform = 'translate(' + keke + 'px, 0)';
+          tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.x + 'px';
+          tooltipEl.style.transform = 'translate(0%, 0)';
+          console.log(tooltipModel.caretX + " " + tooltipModel.x)
+          tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+          tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+          tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+          tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+          tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+          tooltipEl.style.pointerEvents = 'none';
         }
       },
       maintainAspectRatio: false,
@@ -93,8 +158,21 @@ function grafico(fecha, casos, fallecidos, recuperados, activos) {
         yAxes: [{
           display: true,
           ticks: {
-            beginAtZero: true
-          },
+            beginAtZero: true,
+            callback: function (value, index, values) {
+              if (value != 0 && values[0] >= 8000 || values[0] <= -8000) {
+                value = value / 1000
+                value += 'K'
+              } else if (value >= 1000000) {
+                value = value / 1000000
+                value += 'M'
+              }
+              return value;
+            }
+          }
+        }],
+        xAxes: [{
+          display: true
         }]
       }
     }
