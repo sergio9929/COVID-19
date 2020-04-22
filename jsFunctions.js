@@ -144,7 +144,7 @@ function grafico(fecha, casos, fallecidos, recuperados, activos) {
           // tooltipEl.style.transform = 'translate(' + keke + 'px, 0)';
           tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.x + 'px';
           tooltipEl.style.transform = 'translate(0%, 0)';
-          console.log(tooltipModel.caretX + " " + tooltipModel.x)
+          // console.log(tooltipModel.caretX + " " + tooltipModel.x)
           tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
           tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
           tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
