@@ -220,10 +220,10 @@ function csvObject(csv) {
     //correccion
     // if (currentline[0].startsWith("NOTA")) {
     //   i = lines.length - 1;
-    if (currentline[1] == "") {
+    if (currentline[1] == "" || currentline[1] == undefined) {
       obj[headers[0]] = currentline[0];
     } else {
-      for (let j = 0; j < 7; j++) {
+      for (let j = 0; j < headers.length; j++) {
         obj[headers[j]] = currentline[j];
       }
     }
