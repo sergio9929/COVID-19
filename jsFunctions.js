@@ -249,9 +249,11 @@ function leerJSON() {
       var hospitalizados = { cantidad: [], suma: 0, diarios: [] }
       var uci = { cantidad: [], suma: 0, diarios: [] }
       var activos = { cantidad: [], suma: 0, diarios: [] }
+      var pcr ={ cantidad: [], suma: 0, diarios: [] }
+      var testac ={ cantidad: [], suma: 0, diarios: [] }
 
       //fill table head
-      head = "<tr><td class='font-weight-bold'>CCAA</td><td class='font-weight-bold'>Fechas</td><td class='font-weight-bold dark'>Casos</td><td class='font-weight-bold red'>Activos</td><td class='font-weight-bold'>Hospitalizados</td><td class='font-weight-bold'>UCI</td><td class='font-weight-bold yellow'>Fallecidos</td><td class='font-weight-bold blue'>Recuperados</td></tr>";
+      head = "<tr><td class='font-weight-bold'>CCAA</td><td class='font-weight-bold'>Fechas</td><td class='font-weight-bold dark'>Casos</td><td class='font-weight-bold red'>Activos</td><td class='font-weight-bold'>PCR+</td><td class='font-weight-bold'>TestAc+</td><td class='font-weight-bold'>Hospitalizados</td><td class='font-weight-bold'>UCI</td><td class='font-weight-bold yellow'>Fallecidos</td><td class='font-weight-bold blue'>Recuperados</td></tr>";
 
       //fill table body
       var body = "";
@@ -261,10 +263,10 @@ function leerJSON() {
           if (a[i].fecha == maxdate) {
             if (opcion == a[i].ccaa) {
               var q = a[i].casos - a[i].fallecidos - a[i].recuperados;
-              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
+              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td>" + a[i]["pcr+"] + "</td><td>" + a[i]["testac+"] + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
             } else if (opcion == "todos") {
               var q = a[i].casos - a[i].fallecidos - a[i].recuperados;
-              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
+              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td>" + a[i]["pcr+"] + "</td><td>" + a[i]["testac+"] + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
             }
           }
         } else {
@@ -276,8 +278,10 @@ function leerJSON() {
               let q4 = a[i].uci - a[i - 19].uci;
               let q5 = a[i].fallecidos - a[i - 19].fallecidos;
               let q6 = a[i].recuperados - a[i - 19].recuperados;
+              let q7 = a[i]["pcr+"] - a[i - 19]["pcr+"];
+              let q8 = a[i]["testac+"] - a[i - 19]["testac+"];
               let q2 = q1 - q5 - q6;
-              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + q1 + "</td><td class='red'>" + q2 + "</td><td>" + q3 + "</td><td>" + q4 + "</td><td class='yellow'>" + q5 + "</td><td class='blue'>" + q6 + "</td></tr>";
+              body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + q1 + "</td><td class='red'>" + q2 + "</td><td>" + q7 + "</td><td>" + q8 + "</td><td>" + q3 + "</td><td>" + q4 + "</td><td class='yellow'>" + q5 + "</td><td class='blue'>" + q6 + "</td></tr>";
             }
           }
         }
@@ -289,6 +293,8 @@ function leerJSON() {
           hospitalizados.cantidad.push(a[i].hospitalizados);
           uci.cantidad.push(a[i].uci);
           activos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
+          pcr.cantidad.push(a[i]["pcr+"]);
+          testac.cantidad.push(a[i]["testac+"]);
         } else if (opcion == "todos") {
 
           //Eliminar NaN
@@ -310,7 +316,12 @@ function leerJSON() {
           if (a[i].casos - a[i].fallecidos - a[i].recuperados > 0) {
             activos.suma += parseInt(a[i].casos - a[i].fallecidos - a[i].recuperados);
           }
-
+          if (a[i]["pcr+"] > 0) {
+            pcr.suma += parseInt(a[i]["pcr+"]);
+          }
+          if (a[i]["testac+"] > 0) {
+            testac.suma += parseInt(a[i]["testac+"]);
+          }
 
           //suma
           if (a[i].ccaa == "La Rioja") {
@@ -321,10 +332,12 @@ function leerJSON() {
             hospitalizados.cantidad.push(hospitalizados.suma);
             uci.cantidad.push(uci.suma);
             activos.cantidad.push(activos.suma);
+            pcr.cantidad.push(pcr.suma);
+            testac.cantidad.push(testac.suma);
 
             if (maxdate == a[i].fecha && casos.suma > 0 && tipografico == "total") {
-              displaytotal = "<tr style='background-color: #1B1E21;'><td colspan=\"8\"></td></tr>"
-              displaytotal += "<tr><td class='font-weight-bold'>TOTAL</td><td>" + maxdate + "</td><td class='dark'>" + casos.suma + "</td><td class='red'>" + activos.suma + "</td><td>" + hospitalizados.suma + "</td><td>" + uci.suma + "</td><td class='yellow'>" + fallecidos.suma + "</td><td class='blue'>" + recuperados.suma + "</td></tr>";
+              displaytotal = "<tr style='background-color: #1B1E21;'><td colspan=\"10\"></td></tr>"
+              displaytotal += "<tr><td class='font-weight-bold'>TOTAL</td><td>" + maxdate + "</td><td class='dark'>" + casos.suma + "</td><td class='red'>" + activos.suma + "</td><td>" + pcr.suma + "</td><td>" + testac.suma + "</td><td>" + hospitalizados.suma + "</td><td>" + uci.suma + "</td><td class='yellow'>" + fallecidos.suma + "</td><td class='blue'>" + recuperados.suma + "</td></tr>";
             }
 
             casos.suma = 0;
@@ -333,6 +346,8 @@ function leerJSON() {
             hospitalizados.suma = 0;
             uci.suma = 0;
             activos.suma = 0;
+            pcr.suma = 0;
+            testac.suma = 0;
           }
         }
       }
@@ -345,12 +360,14 @@ function leerJSON() {
           hospitalizados.diarios[i] = hospitalizados.cantidad[i] - hospitalizados.cantidad[i - 1];
           uci.diarios[i] = uci.cantidad[i] - uci.cantidad[i - 1];
           activos.diarios[i] = activos.cantidad[i] - activos.cantidad[i - 1];
+          pcr.diarios[i] = pcr.cantidad[i] - pcr.cantidad[i - 1];
+          testac.diarios[i] = testac.cantidad[i] - testac.cantidad[i - 1];
           if (maxdate == fecha[i]) {
             if (opcion != "todos") {
-              body += "<tr><td>" + opcion + "</td><td>" + fecha[i] + "</td><td class='dark'>" + casos.diarios[i] + "</td><td class='red'>" + activos.diarios[i] + "</td><td>" + hospitalizados.diarios[i] + "</td><td>" + uci.diarios[i] + "</td><td class='yellow'>" + fallecidos.diarios[i] + "</td><td class='blue'>" + recuperados.diarios[i] + "</td></tr>";
+              body += "<tr><td>" + opcion + "</td><td>" + fecha[i] + "</td><td class='dark'>" + casos.diarios[i] + "</td><td class='red'>" + activos.diarios[i] + "</td><td>" + pcr.diarios[i] + "</td><td>" + testac.diarios[i] + "</td><td>" + hospitalizados.diarios[i] + "</td><td>" + uci.diarios[i] + "</td><td class='yellow'>" + fallecidos.diarios[i] + "</td><td class='blue'>" + recuperados.diarios[i] + "</td></tr>";
             } else {
-              displaytotal = "<tr style='background-color: #1B1E21;'><td colspan=\"8\"></td></tr>"
-              displaytotal += "<tr><td class='font-weight-bold'>TOTAL</td><td>" + fecha[i] + "</td><td class='dark'>" + casos.diarios[i] + "</td><td class='red'>" + activos.diarios[i] + "</td><td>" + hospitalizados.diarios[i] + "</td><td>" + uci.diarios[i] + "</td><td class='yellow'>" + fallecidos.diarios[i] + "</td><td class='blue'>" + recuperados.diarios[i] + "</td></tr>";
+              displaytotal = "<tr style='background-color: #1B1E21;'><td colspan=\"10\"></td></tr>"
+              displaytotal += "<tr><td class='font-weight-bold'>TOTAL</td><td>" + fecha[i] + "</td><td class='dark'>" + casos.diarios[i] + "</td><td class='red'>" + activos.diarios[i] + "</td><td>" + pcr.diarios[i] + "</td><td>" + testac.diarios[i] + "</td><td>" + hospitalizados.diarios[i] + "</td><td>" + uci.diarios[i] + "</td><td class='yellow'>" + fallecidos.diarios[i] + "</td><td class='blue'>" + recuperados.diarios[i] + "</td></tr>";
             }
           }
         }
@@ -361,6 +378,8 @@ function leerJSON() {
         hospitalizados.cantidad = hospitalizados.diarios;
         uci.cantidad = uci.diarios;
         activos.cantidad = activos.diarios;
+        pcr.cantidad = pcr.diarios;
+        testac.cantidad = testac.diarios;
       }
 
       var notas = "<p class='font-weight-bold mt-4'>Notas del Gobierno:</p>";
