@@ -296,29 +296,48 @@ function leerJSON() {
             }
           }
         }
+        //correccion para 2020/04/28
+        if (a[i].fecha) {
+          var pd1 = a[i].fecha.split("/")
+          var pd2 = new Date(pd1[2], pd1[1] - 1, pd1[0])
+          var pd3 = new Date("2020", "4" - 1, "28")
+        }
+
         if (opcion == a[i].ccaa) {
           fecha.push(a[i].fecha);
           casos.cantidad.push(a[i].casos);
-          casoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"]);
           fallecidos.cantidad.push(a[i].fallecidos);
           recuperados.cantidad.push(a[i].recuperados);
           hospitalizados.cantidad.push(a[i].hospitalizados);
           uci.cantidad.push(a[i].uci);
           activos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
-          activoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados);
+          //correccion para 2020/04/28
+          if (pd2 >= pd3) {
+            casoscorregidos.cantidad.push(a[i]["pcr+"] + a[i]["testac+"]);
+            activoscorregidos.cantidad.push(a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados);
+          } else {
+            casoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"]);
+            activoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados);
+          }
           pcr.cantidad.push(a[i]["pcr+"]);
           testac.cantidad.push(a[i]["testac+"]);
 
         } else if (opcion == "todos") {
 
           casos.suma += a[i].casos;
-          casoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"];
           fallecidos.suma += a[i].fallecidos;
           recuperados.suma += a[i].recuperados;
           hospitalizados.suma += a[i].hospitalizados;
           uci.suma += a[i].uci;
           activos.suma += a[i].casos - a[i].fallecidos - a[i].recuperados;
-          activoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+          //correccion para 2020/04/28
+          if (pd2 >= pd3) {
+            casoscorregidos.suma += a[i]["pcr+"] + a[i]["testac+"];
+            activoscorregidos.suma += a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+          } else {
+            casoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"];
+            activoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+          }
           pcr.suma += a[i]["pcr+"];
           testac.suma += a[i]["testac+"];
 
