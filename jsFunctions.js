@@ -238,7 +238,7 @@ function csvObject(csv) {
 
     result.push(obj);
   }
-  console.log(result)
+
   return result; //JavaScript object
 }
 
