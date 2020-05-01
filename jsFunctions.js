@@ -220,7 +220,7 @@ function csvObject(csv) {
     //correccion
     // if (currentline[0].startsWith("NOTA")) {
     //   i = lines.length - 1;
-    if (currentline[1] == "" || currentline[1] == undefined) {
+    if (currentline[1] == 0) {
       obj[headers[0]] = currentline[0];
     } else {
       for (let j = 0; j < headers.length; j++) {
@@ -230,7 +230,7 @@ function csvObject(csv) {
           obj[headers[j]] = parseInt(currentline[j]);
         }
 
-        if (currentline[j] == "") {
+        if (currentline[j] == 0) {
           obj[headers[j]] = 0;
         }
       }
@@ -238,7 +238,7 @@ function csvObject(csv) {
 
     result.push(obj);
   }
-
+  console.log(result)
   return result; //JavaScript object
 }
 
