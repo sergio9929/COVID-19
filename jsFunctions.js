@@ -269,6 +269,14 @@ function leerJSON() {
       //fill table body
       var body = "";
       for (let i = 0; i < a.length; i++) {
+
+        //String to Date
+        if (a[i].fecha) {
+          var pd1 = a[i].fecha.split("/")
+          var pd2 = new Date(pd1[2], pd1[1] - 1, pd1[0])
+          var pd3 = new Date("2020", "4" - 1, "28")
+        }
+
         a[i].ccaa = renombrar(a[i].ccaa);
         if (tipografico == "total") {
           if (a[i].fecha == maxdate) {
@@ -296,12 +304,6 @@ function leerJSON() {
             }
           }
         }
-        //correccion para 2020/04/28
-        if (a[i].fecha) {
-          var pd1 = a[i].fecha.split("/")
-          var pd2 = new Date(pd1[2], pd1[1] - 1, pd1[0])
-          var pd3 = new Date("2020", "4" - 1, "28")
-        }
 
         if (opcion == a[i].ccaa) {
           fecha.push(a[i].fecha);
@@ -311,13 +313,12 @@ function leerJSON() {
           hospitalizados.cantidad.push(a[i].hospitalizados);
           uci.cantidad.push(a[i].uci);
           activos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
-          //correccion para 2020/04/28
-          if (pd2 >= pd3) {
+          if (a[i]["pcr+"] == 0) {
+            casoscorregidos.cantidad.push(a[i].casos);
+            activoscorregidos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
+          } else {
             casoscorregidos.cantidad.push(a[i]["pcr+"] + a[i]["testac+"]);
             activoscorregidos.cantidad.push(a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados);
-          } else {
-            casoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"]);
-            activoscorregidos.cantidad.push(a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados);
           }
           pcr.cantidad.push(a[i]["pcr+"]);
           testac.cantidad.push(a[i]["testac+"]);
@@ -330,13 +331,12 @@ function leerJSON() {
           hospitalizados.suma += a[i].hospitalizados;
           uci.suma += a[i].uci;
           activos.suma += a[i].casos - a[i].fallecidos - a[i].recuperados;
-          //correccion para 2020/04/28
-          if (pd2 >= pd3) {
+          if (a[i]["pcr+"] == 0) {
+            casoscorregidos.suma += a[i].casos;
+            activoscorregidos.suma += a[i].casos - a[i].fallecidos - a[i].recuperados;
+          } else {
             casoscorregidos.suma += a[i]["pcr+"] + a[i]["testac+"];
             activoscorregidos.suma += a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
-          } else {
-            casoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"];
-            activoscorregidos.suma += a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
           }
           pcr.suma += a[i]["pcr+"];
           testac.suma += a[i]["testac+"];
@@ -357,7 +357,7 @@ function leerJSON() {
             testac.cantidad.push(testac.suma);
 
 
-            if (maxdate == a[i].fecha && casos.suma > 0 && tipografico == "total") {
+            if (maxdate == a[i].fecha && tipografico == "total") {
               displaytotal = "<tr style='background-color: #1B1E21;'><td colspan=\"10\"></td></tr>"
               displaytotal += "<tr><td class='font-weight-bold'>TOTAL</td><td>" + maxdate + "</td><td class='dark'>" + casos.suma + "</td><td class='red'>" + activoscorregidos.suma + "</td><td class='dark'>" + pcr.suma + "</td><td class='dark'>" + testac.suma + "</td><td>" + hospitalizados.suma + "</td><td>" + uci.suma + "</td><td class='yellow'>" + fallecidos.suma + "</td><td class='blue'>" + recuperados.suma + "</td></tr>";
             }
