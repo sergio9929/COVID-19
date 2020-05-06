@@ -186,7 +186,11 @@ function llenarfechas() {
   rawFile.onreadystatechange = () => {
     if (rawFile.readyState === 4 && rawFile.status === 200 || rawFile.status == 0) {
       var a = csvObject(rawFile.responseText);
-      maxdate = a[a.length - 8].fecha;
+      var contador = a.length - 1;
+      while (a[contador].ccaa != "RI") {
+        maxdate = a[contador - 1].fecha;
+        contador--;
+      }
       for (let i = a.length - 1; i > 0; i--) {
         if (a[i].ccaa == "RI") {
           document.getElementById("fechas").innerHTML += "<a class=\"dropdown-item\" href=\"#\" name=\"" + a[i].fecha + "\">" + a[i].fecha + "</a>";
@@ -220,7 +224,7 @@ function csvObject(csv) {
     //correccion
     // if (currentline[0].startsWith("NOTA")) {
     //   i = lines.length - 1;
-    if (currentline[1] == 0) {
+    if (currentline[1] == 0 || currentline[1] == undefined) {
       obj[headers[0]] = currentline[0];
     } else {
       for (let j = 0; j < headers.length; j++) {
@@ -230,7 +234,7 @@ function csvObject(csv) {
           obj[headers[j]] = parseInt(currentline[j]);
         }
 
-        if (currentline[j] == 0) {
+        if (currentline[j] == 0 || currentline[j] == undefined) {
           obj[headers[j]] = 0;
         }
       }
@@ -281,10 +285,18 @@ function leerJSON() {
         if (tipografico == "total") {
           if (a[i].fecha == maxdate) {
             if (opcion == a[i].ccaa) {
-              var q = a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+              if (a[i]["pcr+"] == 0 || a[i]["pcr+"] == undefined) {
+                var q = a[i].casos - a[i].fallecidos - a[i].recuperados;
+              } else {
+                var q = a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+              }
               body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td class='dark'>" + a[i]["pcr+"] + "</td><td class='dark'>" + a[i]["testac+"] + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
             } else if (opcion == "todos") {
-              var q = a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+              if (a[i]["pcr+"] == 0 || a[i]["pcr+"] == undefined) {
+                var q = a[i].casos - a[i].fallecidos - a[i].recuperados;
+              } else {
+                var q = a[i].casos + a[i]["pcr+"] + a[i]["testac+"] - a[i].fallecidos - a[i].recuperados;
+              }
               body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + a[i].casos + "</td><td class='red'>" + q + "</td><td class='dark'>" + a[i]["pcr+"] + "</td><td class='dark'>" + a[i]["testac+"] + "</td><td>" + a[i].hospitalizados + "</td><td>" + a[i].uci + "</td><td class='yellow'>" + a[i].fallecidos + "</td><td class='blue'>" + a[i].recuperados + "</td></tr>";
             }
           }
@@ -299,7 +311,11 @@ function leerJSON() {
               let q6 = a[i].recuperados - a[i - 19].recuperados;
               let q7 = a[i]["pcr+"] - a[i - 19]["pcr+"];
               let q8 = a[i]["testac+"] - a[i - 19]["testac+"];
-              let q2 = q1 + q7 + q8 - q5 - q6;
+              if (a[i]["pcr+"] == 0 || a[i]["pcr+"] == undefined) {
+                var q2 = q1 - q5 - q6;
+              } else {
+                var q2 = q1 + q7 + q8 - q5 - q6;
+              }
               body += "<tr><td>" + a[i].ccaa + "</td><td>" + a[i].fecha + "</td><td class='dark'>" + q1 + "</td><td class='red'>" + q2 + "</td><td class='dark'>" + q7 + "</td><td class='dark'>" + q8 + "</td><td>" + q3 + "</td><td>" + q4 + "</td><td class='yellow'>" + q5 + "</td><td class='blue'>" + q6 + "</td></tr>";
             }
           }
@@ -313,7 +329,7 @@ function leerJSON() {
           hospitalizados.cantidad.push(a[i].hospitalizados);
           uci.cantidad.push(a[i].uci);
           activos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
-          if (a[i]["pcr+"] == 0) {
+          if (a[i]["pcr+"] == 0 || a[i]["pcr+"] == undefined) {
             casoscorregidos.cantidad.push(a[i].casos);
             activoscorregidos.cantidad.push(a[i].casos - a[i].fallecidos - a[i].recuperados);
           } else {
@@ -331,7 +347,7 @@ function leerJSON() {
           hospitalizados.suma += a[i].hospitalizados;
           uci.suma += a[i].uci;
           activos.suma += a[i].casos - a[i].fallecidos - a[i].recuperados;
-          if (a[i]["pcr+"] == 0) {
+          if (a[i]["pcr+"] == 0 || a[i]["pcr+"] == undefined) {
             casoscorregidos.suma += a[i].casos;
             activoscorregidos.suma += a[i].casos - a[i].fallecidos - a[i].recuperados;
           } else {
@@ -340,7 +356,6 @@ function leerJSON() {
           }
           pcr.suma += a[i]["pcr+"];
           testac.suma += a[i]["testac+"];
-
 
           //suma
           if (a[i].ccaa == "La Rioja") {
