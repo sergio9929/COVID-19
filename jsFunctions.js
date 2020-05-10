@@ -1,5 +1,5 @@
 console.log("hola")
-const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/serie_historica_acumulados.csv";
+const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/agregados.csv";
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
@@ -264,7 +264,7 @@ function leerJSON() {
       var activoscorregidos = { cantidad: [], suma: 0, diarios: [] }
 
       //fill table head
-      head = "<tr><td class='font-weight-bold'>CCAA</td><td class='font-weight-bold'>Fechas</td><td class='font-weight-bold dark'>Casos</td><td class='font-weight-bold red'>Activos</td><td class='font-weight-bold dark'>PCR+</td><td class='font-weight-bold dark'>TestAc+</td><td class='font-weight-bold'>Hospitalizados</td><td class='font-weight-bold'>UCI</td><td class='font-weight-bold yellow'>Fallecidos</td><td class='font-weight-bold blue'>Recuperados</td></tr>";
+      head = "<tr><td class='font-weight-bold'>CCAA</td><td class='font-weight-bold'>Fechas</td><td class='font-weight-bold dark'>Casos</td><td class='font-weight-bold red'>Activos</td><td class='font-weight-bold dark'>PCR</td><td class='font-weight-bold dark'>TestAc</td><td class='font-weight-bold'>Hospitalizados</td><td class='font-weight-bold'>UCI</td><td class='font-weight-bold yellow'>Fallecidos</td><td class='font-weight-bold blue'>Recuperados</td></tr>";
 
       //fill table body
       var body = "";
