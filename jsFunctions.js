@@ -1,5 +1,6 @@
 console.log("hola")
-const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/agregados.csv";
+// const csvPath = "https://raw.githubusercontent.com/rubenfcasal/COVID-19/master/agregados.csv";
+const csvPath = "serie_historica_acumulados_01_05_2020.csv";
 var opcion = "todos";
 var maxdate = "20/02/2020";
 var tipografico = "total";
